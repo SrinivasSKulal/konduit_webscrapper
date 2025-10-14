@@ -37,7 +37,7 @@ The system works in three simple steps:
 Crawl a website and extract text content:
 
 ```bash
-python rag_fast_v2.py crawl 20 https://example.com
+python main.py crawl 20 https://example.com
 ```
 
 replace 20 with required number
@@ -62,7 +62,7 @@ replace 20 with required number
 Create a vector index from the crawled content:
 
 ```bash
-python rag_fast_v2.py index
+python main.py index
 ```
 
 **What it does:**
@@ -86,7 +86,7 @@ python rag_fast_v2.py index
 Query your knowledge base:
 
 ```bash
-python rag_fast_v2.py ask "What is this website about?"
+python main.py ask "What is this website about?"
 ```
 
 **Example output:**
@@ -190,42 +190,42 @@ max_new_tokens = 120    # Maximum tokens in answer
 
 ```bash
 # Crawl Python documentation
-python rag_fast_v2.py crawl 20 https://docs.python.org/3/
+python main.py crawl 20 https://docs.python.org/3/
 
 # Build index
-python rag_fast_v2.py index
+python main.py index
 
 # Ask questions
-python rag_fast_v2.py ask "What are decorators in Python?"
-python rag_fast_v2.py ask "How do I handle exceptions?"
+python main.py ask "What are decorators in Python?"
+python main.py ask "How do I handle exceptions?"
 ```
 
 ### Example 2: Company Website
 
 ```bash
 # Crawl company site
-python rag_fast_v2.py crawl 20 https://yourcompany.com
+python main.py crawl 20 https://yourcompany.com
 
 # Build index
-python rag_fast_v2.py index
+python main.py index
 
 # Ask questions
-python rag_fast_v2.py ask "What products does this company offer?"
-python rag_fast_v2.py ask "Where is the company located?"
+python main.py ask "What products does this company offer?"
+python main.py ask "Where is the company located?"
 ```
 
 ### Example 3: Blog or News Site
 
 ```bash
 # Crawl blog
-python rag_fast_v2.py crawl 20 https://techblog.example.com
+python main.py crawl 20 https://techblog.example.com
 
 # Build index
-python rag_fast_v2.py index
+python main.py index
 
 # Ask questions
-python rag_fast_v2.py ask "What are the latest articles about AI?"
-python rag_fast_v2.py ask "Tell me about machine learning tutorials"
+python main.py ask "What are the latest articles about AI?"
+python main.py ask "Tell me about machine learning tutorials"
 ```
 
 ## Troubleshooting
@@ -233,13 +233,13 @@ python rag_fast_v2.py ask "Tell me about machine learning tutorials"
 ### Issue: "Index file not found"
 **Solution:** Run the `index` command before asking questions:
 ```bash
-python rag_fast_v2.py index
+python main.py index
 ```
 
 ### Issue: "No documents found in crawled data"
 **Solution:** Run the `crawl` command first:
 ```bash
-python rag_fast_v2.py crawl 20 https://example.com
+python main.py crawl 20 https://example.com
 ```
 
 ### Issue: "Token indices sequence length is longer than maximum"
