@@ -1,5 +1,4 @@
-
-# Konduit Web Scrapper and summarize
+# RAG Fast v2 🚀
 
 A fast, CPU-only Retrieval-Augmented Generation (RAG) system that crawls websites, builds a searchable knowledge base, and answers questions using the crawled content.
 
@@ -22,11 +21,6 @@ A fast, CPU-only Retrieval-Augmented Generation (RAG) system that crawls website
 ```bash
 pip install requests beautifulsoup4 sentence-transformers faiss-cpu transformers tldextract
 ```
-or
-```bash
-pip install -r requirements.txt
-```
-
 
 ## Usage
 
@@ -37,11 +31,11 @@ The system works in three simple steps:
 Crawl a website and extract text content:
 
 ```bash
-python main.py crawl 20 https://example.com
+python rag_fast_v2.py crawl https://example.com
 ```
 
-replace 20 with required number
 **Options:**
+- Crawls up to 15 pages from the same domain
 - Automatically deduplicates URLs
 - Skips pages with minimal content
 - Saves results to `crawled.json`
@@ -62,7 +56,7 @@ replace 20 with required number
 Create a vector index from the crawled content:
 
 ```bash
-python main.py index
+python rag_fast_v2.py index
 ```
 
 **What it does:**
@@ -86,7 +80,7 @@ python main.py index
 Query your knowledge base:
 
 ```bash
-python main.py ask "What is this website about?"
+python rag_fast_v2.py ask "What is this website about?"
 ```
 
 **Example output:**
@@ -99,8 +93,8 @@ python main.py ask "What is this website about?"
 ============================================================
 ANSWER:
 ============================================================
-Example.com is an illustrative domain used in documentation
-and examples. It serves as a placeholder for demonstrating
+Example.com is an illustrative domain used in documentation 
+and examples. It serves as a placeholder for demonstrating 
 web concepts and is maintained by IANA for this purpose.
 
 ============================================================
@@ -159,6 +153,7 @@ You can modify these parameters in the code:
 
 ```python
 # Crawling
+max_pages = 15          # Maximum pages to crawl
 delay = 0.5             # Delay between requests (seconds)
 
 # Chunking
@@ -176,7 +171,7 @@ max_new_tokens = 120    # Maximum tokens in answer
 
 ```
 .
-├── main.py             # Main script
+├── rag_fast_v2.py      # Main script
 ├── crawled.json        # Crawled website content
 ├── index.faiss         # FAISS vector index
 ├── texts.json          # Text chunks
@@ -190,42 +185,42 @@ max_new_tokens = 120    # Maximum tokens in answer
 
 ```bash
 # Crawl Python documentation
-python main.py crawl 20 https://docs.python.org/3/
+python rag_fast_v2.py crawl https://docs.python.org/3/
 
 # Build index
-python main.py index
+python rag_fast_v2.py index
 
 # Ask questions
-python main.py ask "What are decorators in Python?"
-python main.py ask "How do I handle exceptions?"
+python rag_fast_v2.py ask "What are decorators in Python?"
+python rag_fast_v2.py ask "How do I handle exceptions?"
 ```
 
 ### Example 2: Company Website
 
 ```bash
 # Crawl company site
-python main.py crawl 20 https://yourcompany.com
+python rag_fast_v2.py crawl https://yourcompany.com
 
 # Build index
-python main.py index
+python rag_fast_v2.py index
 
 # Ask questions
-python main.py ask "What products does this company offer?"
-python main.py ask "Where is the company located?"
+python rag_fast_v2.py ask "What products does this company offer?"
+python rag_fast_v2.py ask "Where is the company located?"
 ```
 
 ### Example 3: Blog or News Site
 
 ```bash
 # Crawl blog
-python main.py crawl 20 https://techblog.example.com
+python rag_fast_v2.py crawl https://techblog.example.com
 
 # Build index
-python main.py index
+python rag_fast_v2.py index
 
 # Ask questions
-python main.py ask "What are the latest articles about AI?"
-python main.py ask "Tell me about machine learning tutorials"
+python rag_fast_v2.py ask "What are the latest articles about AI?"
+python rag_fast_v2.py ask "Tell me about machine learning tutorials"
 ```
 
 ## Troubleshooting
@@ -233,20 +228,20 @@ python main.py ask "Tell me about machine learning tutorials"
 ### Issue: "Index file not found"
 **Solution:** Run the `index` command before asking questions:
 ```bash
-python main.py index
+python rag_fast_v2.py index
 ```
 
 ### Issue: "No documents found in crawled data"
 **Solution:** Run the `crawl` command first:
 ```bash
-python main.py crawl 20 https://example.com
+python rag_fast_v2.py crawl https://example.com
 ```
 
 ### Issue: "Token indices sequence length is longer than maximum"
 **Solution:** This warning is handled automatically. The system now limits context length to avoid this issue.
 
 ### Issue: Slow performance
-**Solution:**
+**Solution:** 
 - First run downloads models (~500MB) - subsequent runs are faster
 - Reduce `max_pages` for faster crawling
 - Reduce `top_k` for faster retrieval
@@ -267,11 +262,12 @@ Typical performance on a modern CPU:
 | Index (50 chunks) | ~5-10 seconds |
 | Query (retrieval + generation) | ~2-5 seconds |
 
-**First run:** Expect 10 minutes max delay for model downloads (~1-2GB).
+**First run:** Expect 1-2 minute delay for model downloads (~500MB).
 
 ## Limitations
 
 - **Domain-specific:** Only crawls within the starting domain
+- **Page limit:** Default maximum of 15 pages
 - **No authentication:** Cannot access login-protected content
 - **Static content only:** Cannot execute JavaScript or access dynamic content
 - **English-optimized:** Best results with English content
@@ -284,7 +280,7 @@ Typical performance on a modern CPU:
 Edit the `crawl()` function call:
 
 ```python
-crawl(start_url, max_pages, delay=1.0)  # 1 second delay
+crawl(start_url, max_pages=50, delay=1.0)  # 50 pages, 1 second delay
 ```
 
 ### Different Embedding Model
@@ -317,6 +313,78 @@ Feel free to submit issues and enhancement requests!
 
 This project is provided as-is for educational and research purposes.
 
+## Tooling and Prompts
+
+### Models Used
+
+**Embedding Model:**
+- **Model:** `sentence-transformers/paraphrase-MiniLM-L3-v2`
+- **Purpose:** Converting text chunks into 384-dimensional vectors for semantic search
+- **Source:** [Hugging Face](https://huggingface.co/sentence-transformers/paraphrase-MiniLM-L3-v2)
+- **License:** Apache 2.0
+
+**Language Model:**
+- **Model:** `google/flan-t5-small` (80M parameters)
+- **Purpose:** Generating natural language answers from retrieved context
+- **Source:** [Hugging Face](https://huggingface.co/google/flan-t5-small)
+- **License:** Apache 2.0
+
+### Libraries
+
+| Library | Version | Purpose |
+|---------|---------|---------|
+| `sentence-transformers` | Latest | Text embeddings |
+| `faiss-cpu` | Latest | Vector similarity search |
+| `transformers` | Latest | LLM inference |
+| `beautifulsoup4` | Latest | HTML parsing |
+| `requests` | Latest | HTTP requests |
+| `tldextract` | Latest | Domain extraction |
+| `numpy` | Latest | Array operations |
+
+### Prompt Template
+
+The following prompt template is used for answer generation:
+
+```python
+prompt = f"""Answer this question based on the context provided.
+
+Context: {context}
+
+Question: {query}
+
+Provide a clear, detailed answer (2-3 sentences):"""
+```
+
+**Generation Parameters:**
+- `max_length`: 512 tokens (includes prompt + response)
+- `max_new_tokens`: 120 tokens
+- `num_beams`: 4 (beam search for better quality)
+- `do_sample`: False (deterministic output)
+
+### Architecture Details
+
+**Vector Index:**
+- **Type:** FAISS IndexFlatL2
+- **Distance Metric:** L2 (Euclidean distance)
+- **Dimensions:** 384 (from MiniLM-L3-v2)
+
+**Text Processing:**
+- **Chunk Size:** 800 characters
+- **Overlap:** 100 characters
+- **Top-K Retrieval:** 5 chunks
+- **Context Limit:** Top 3 chunks, max 300 chars each
+
+### Attributions
+
+- **RAG Architecture:** Inspired by the RAG (Retrieval-Augmented Generation) paper by Lewis et al. (2020)
+- **Implementation:** Original implementation, not based on existing templates
+- **Web Crawling Logic:** Standard BFS (Breadth-First Search) approach
+- **URL Normalization:** Custom implementation using Python's `urlparse`
+
+### External Resources
+
+No external APIs, paid services, or cloud resources are required. All processing is done locally on CPU.
+
 ## Credits
 
 Built with:
@@ -324,3 +392,15 @@ Built with:
 - [FAISS](https://github.com/facebookresearch/faiss) - Vector similarity search
 - [Transformers](https://huggingface.co/transformers/) - Language models
 - [BeautifulSoup](https://www.crummy.com/software/BeautifulSoup/) - HTML parsing
+
+## License
+
+This project is provided as-is for educational and research purposes.
+
+**Model Licenses:**
+- FLAN-T5: Apache License 2.0
+- MiniLM-L3-v2: Apache License 2.0
+
+---
+
+**Happy RAG-ing! 🎉**
