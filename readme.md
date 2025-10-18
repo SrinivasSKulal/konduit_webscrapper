@@ -1,4 +1,4 @@
-# RAG Fast v2 🚀
+# Web scrapper and website summarizer🚀
 
 A fast, CPU-only Retrieval-Augmented Generation (RAG) system that crawls websites, builds a searchable knowledge base, and answers questions using the crawled content.
 
